@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: ./api
+      # Only build development stage from Dockerfile
+      target: development
+    # Mount our host directory to the docker container
+    # Mount api directory (./api) to the docker container (/diza/src/app)
+    # Reflect file changes from host to container
+    volumes:
+      - ./api:/diza/src/app
+      - /diza/src/app/node_modules
+      - /diza/src/app/node_modules/bcrypt
+    # RUN in debug mode: npm run start:dubug
+    # Run in dev mode: npm run start:dev
+    command: npm run start:dev
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgress://service:password@postgres:5432/db
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - 3000:3000
+      - 9292:9292
+
+
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+      target: development
+    command: npm run start
+    volumes:
+      - ./frontend:/diza/frontend/src/app
+      - /diza/frontend/src/app
+    ports:
+      - 4200:4200
+      - 49153:49153
+    links:
+      - api
+
+  postgres:
+    image: postgres:10.4
+    environment:
+      POSTGRES_USER: service
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    ports:
+      - 35000:5432
+
+  postgres_admin:
+    image: dpage/pgadmin4:4.28
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 5050:80
+
+
+
