@@ -22,7 +22,7 @@ export class RegisterComponent {
     ]),
   });
 
-  get registerFrom(): FormGroup {
+  get registerForm(): FormGroup {
     return this._registerForm;
   }
 
