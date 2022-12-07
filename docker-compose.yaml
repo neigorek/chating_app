@@ -22,6 +22,7 @@ services:
     environment:
       DATABASE_URL: postgress://service:password@postgres:5432/db
       NODE_ENV: development
+      JWT_SECRET: hard_to_guess_secret
       PORT: 3000
     ports:
       - 3000:3000
@@ -39,7 +40,7 @@ services:
       - /diza/frontend/src/app
     ports:
       - 4200:4200
-      - 49153:49153
+      - 50000:49153
     links:
       - api
 
