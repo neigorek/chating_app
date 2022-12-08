@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { RoomEntity } from 'src/chat/model/room.entity';
 
 @Entity()
 export class UserEntity {
@@ -10,6 +17,9 @@ export class UserEntity {
 
   @Column({ unique: true })
   email: string;
+
+  @ManyToMany(() => RoomEntity, (room) => room.users)
+  rooms: RoomEntity[];
 
   @Column({ select: false })
   password: string;
