@@ -23,7 +23,6 @@ export class UserController {
       .pipe(switchMap((usr: UserInterface) => this._userService.create(usr)));
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(
     @Query('page') page: number = 1,

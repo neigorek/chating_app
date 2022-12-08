@@ -62,6 +62,3 @@ services:
       PGADMIN_DEFAULT_PASSWORD: password
     ports:
       - 5050:80
-
-
-

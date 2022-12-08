@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/model/user.entity';
 import { Repository } from 'typeorm';
 import { UserInterface } from 'src/user/model/user.interface';
-import { from, map, mapTo, Observable, switchMap } from 'rxjs';
+import { from, map, Observable, switchMap } from 'rxjs';
 import {
   IPaginationOptions,
   paginate,
@@ -97,6 +97,10 @@ export class UserService {
         select: ['id', 'email', 'password', 'username'],
       }),
     );
+  }
+
+  public getOne(id: number): Promise<UserInterface> {
+    return this.userRepository.findOneOrFail({ where: { id } });
   }
 
   private _mailExist(email: string): Observable<boolean> {
