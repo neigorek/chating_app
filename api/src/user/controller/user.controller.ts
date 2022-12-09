@@ -1,13 +1,11 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { UserService } from 'src/user/service/user.service';
-import { map, Observable, of, switchMap } from 'rxjs';
 import { CreateUserDto } from 'src/user/model/dto/create-user-dto';
 import { UserHelperService } from 'src/user/service/user-helper/user-helper.service';
 import { UserInterface } from 'src/user/model/user.interface';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { LoginUserDto } from 'src/user/model/dto/login-user-dto';
 import { LoginResponseInterface } from 'src/user/model/login-response.interface';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -17,17 +15,19 @@ export class UserController {
   ) {}
 
   @Post()
-  createUser(@Body() createUserDTO: CreateUserDto): Observable<UserInterface> {
-    return this._userHelperService
-      .createUserDtoToEntity(createUserDTO)
-      .pipe(switchMap((usr: UserInterface) => this._userService.create(usr)));
+  async createUser(
+    @Body() createUserDTO: CreateUserDto,
+  ): Promise<UserInterface> {
+    const userEntity =
+      this._userHelperService.createUserDtoToEntity(createUserDTO);
+    return this._userService.create(userEntity);
   }
 
   @Get()
-  findAll(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-  ): Observable<Pagination<UserInterface>> {
+  async findAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ): Promise<Pagination<UserInterface>> {
     limit = limit > 100 ? 100 : limit;
     return this._userService.findAll({
       page,
@@ -37,21 +37,22 @@ export class UserController {
   }
 
   @Post('login')
-  login(
+  async login(
     @Body() loginUserDTO: LoginUserDto,
-  ): Observable<LoginResponseInterface> {
-    return this._userHelperService
-      .loginUserDtoToEntity(loginUserDTO)
-      .pipe(switchMap((user) => this._userService.login(user)))
-      .pipe(
-        map((jwt: string) => {
-          const loginResponse: LoginResponseInterface = {
-            access_token: jwt,
-            token_type: 'JWT',
-            expire_in: 10000,
-          };
-          return loginResponse;
-        }),
-      );
+  ): Promise<LoginResponseInterface> {
+    const userEntity: UserInterface =
+      this._userHelperService.loginUserDtoToEntity(loginUserDTO);
+    const jwt: string = await this._userService.login(userEntity);
+    const loginResponse: LoginResponseInterface = {
+      access_token: jwt,
+      token_type: 'JWT',
+      expire_in: 10000,
+    };
+    return loginResponse;
+  }
+
+  @Get('find-by-username')
+  async findAllByUserName(@Query('username') username: string) {
+    return this._userService.findAllByUserName(username);
   }
 }
