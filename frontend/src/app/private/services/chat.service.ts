@@ -5,13 +5,13 @@ import {
   RoomInterface,
   RoomPaginationInterface,
 } from '../../models/rooms.interface';
-import { UserInterface } from '../../models/user.interface';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  constructor(private _socket: SocketCustom) {}
+  constructor(private _socket: SocketCustom, private _snackBar: MatSnackBar) {}
 
   public sendMessage() {}
 
@@ -23,16 +23,12 @@ export class ChatService {
     return this._socket.fromEvent<RoomPaginationInterface>('rooms');
   }
 
-  public createRoom() {
-    const user: UserInterface = {
-      id: 34,
-    };
-
-    const room: RoomInterface = {
-      name: 'Test Name Room',
-      users: [user],
-    };
-
+  public createRoom(room: RoomInterface) {
     this._socket.emit('createRoom', room);
+    this._snackBar.open(`Room ${room.name}, was successfully created`);
+  }
+
+  public paginateRooms(limit: number, page: number): void {
+    this._socket.emit('paginateRooms', { limit, page });
   }
 }

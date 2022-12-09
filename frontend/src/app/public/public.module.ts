@@ -4,11 +4,8 @@ import { CommonModule } from '@angular/common';
 import { PublicRoutingModule } from './public-routing.module';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { MaterialModule } from '../material/material.module';
 
 @NgModule({
   declarations: [LoginComponent, RegisterComponent],
@@ -16,10 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
     CommonModule,
     PublicRoutingModule,
     ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
+    MaterialModule,
   ],
 })
 export class PublicModule {}

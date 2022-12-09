@@ -10,7 +10,7 @@ import { UserInterface } from '../../models/user.interface';
 export class UserService {
   constructor(private _http: HttpClient, private _snackBar: MatSnackBar) {}
 
-  create(user: UserInterface): Observable<UserInterface> {
+  public create(user: UserInterface): Observable<UserInterface> {
     return this._http.post('api/user', user).pipe(
       take(1),
       tap((createdUser: UserInterface) => {
@@ -30,6 +30,12 @@ export class UserService {
         );
         return throwError(err);
       })
+    );
+  }
+
+  public findByUserName(username: string): Observable<UserInterface[]> {
+    return this._http.get<UserInterface[]>(
+      `/api/user/find-by-username?username=${username}`
     );
   }
 }
